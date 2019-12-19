@@ -28,9 +28,18 @@ CombatantList& CombatantList::operator=(CombatantList const& other) {
     _combatants = other._combatants;
     return *this;
 }
+
 CombatantList& CombatantList::operator=(CombatantList && other) {
     _combatants = std::move(other._combatants);
     return *this;
+}
+
+CombatantInstance& CombatantList::operator[](int const i) {
+    return _combatants[i];
+}
+
+CombatantInstance const& CombatantList::operator[](int const i) const {
+    return _combatants[i];
 }
 
 void CombatantList::for_each(std::function<void(CombatantInstance&)> op) {

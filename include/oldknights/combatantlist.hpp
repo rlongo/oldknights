@@ -22,6 +22,11 @@ public:
     CombatantList& operator=(CombatantList const& other);
     CombatantList& operator=(CombatantList && other);
 
+    CombatantInstance& operator[](int const i);
+    CombatantInstance const& operator[](int const i) const;
+
+    [[nodiscard]] size_t size() const { return _combatants.size();}
+
     void for_each(std::function<void(CombatantInstance&)> op);
     void for_each(std::function<void(CombatantInstance const&)> op) const;
 
