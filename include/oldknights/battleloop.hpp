@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "oldknights/combatant.hpp"
+#include "oldknights/combatantlist.hpp"
 
 namespace oldknights {
 
@@ -11,7 +11,7 @@ namespace oldknights {
  */
 class BattleLoop {
 private:
-    std::vector<CombatantInstance> _combatants;
+    CombatantList _combatants;
 
     [[nodiscard]] size_t get_count(Alleigance const alleigance,
             bool const must_be_alive=false) const;
@@ -20,7 +20,8 @@ private:
     void print_stats_bar() const noexcept; 
      
 public:
-    BattleLoop(std::vector<Combatant>const& combatants);
+    BattleLoop(CombatantList const& combatants);
+    BattleLoop(CombatantList&& combatants);
 
     /**
      * Runs the fight between combatants 

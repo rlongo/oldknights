@@ -50,6 +50,7 @@ int main(void) {
         .agility = 3
     };
 
-    BattleLoop loop({e1, p1, p2, p3});
+    CombatantList combatants({e1, p1, p2, p3});
+    BattleLoop loop(std::move(combatants));
     return loop.fight() ? 0 : -1;
 }

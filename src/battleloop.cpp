@@ -6,38 +6,24 @@
 
 using namespace oldknights;
 
-BattleLoop::BattleLoop(std::vector<Combatant>const& combatants)
-    : _combatants() {
- 
-    for (auto& c : combatants) {
-        CombatantInstance instance = {
-            .hp = c.max_hp,
-            .mp = c.max_mp,
-            .stats = c
-        };
-        _combatants.push_back(std::move(instance));
-    }
-
-    std::sort(_combatants.begin(), _combatants.end(),
-            [](auto const& a, auto const& b) {
-                return a.stats.agility > b.stats.agility;
-                }
-            );
-   
-    if (get_count(Alleigance::Hero, true) == 0
-            || get_count(Alleigance::Bad, true) == 0) {
-        
+BattleLoop::BattleLoop(CombatantList const& combatants)
+    : _combatants(combatants) {
+    
+    _combatants.sort_by_agility();
+    if (_combatants.get_count(Alleigance::Hero, true) == 0
+            || _combatants.get_count(Alleigance::Bad, true) == 0) {
         throw GameError("GameLoop does not contain a list of combatants capable of fighting");
     }
 }
 
-
-size_t BattleLoop::get_count(Alleigance const alleigance,
-        bool const must_be_alive) const {
-    return std::count_if(_combatants.begin(), _combatants.end(),
-            [alleigance, must_be_alive](auto const& c) {
-                return c.stats.alleigance==alleigance && (!must_be_alive || c.hp>0);
-            });
+BattleLoop::BattleLoop(CombatantList && combatants)
+    : _combatants(std::move(combatants)) {
+    
+    _combatants.sort_by_agility();
+    if (_combatants.get_count(Alleigance::Hero, true) == 0
+            || _combatants.get_count(Alleigance::Bad, true) == 0) {
+        throw GameError("GameLoop does not contain a list of combatants capable of fighting");
+    }
 }
 
 void BattleLoop::print_combatant(CombatantInstance const& c) noexcept {
@@ -52,18 +38,19 @@ void BattleLoop::print_combatant(CombatantInstance const& c) noexcept {
 void BattleLoop::print_stats_bar() const noexcept {
     auto print_by_alleigance = [this](Alleigance const alleigance) {
         auto i = 0;
-        for (auto& c: _combatants) {
-            if (c.stats.alleigance != alleigance) continue;
-            print_combatant(c);
-            if (i++ % 2) printf("\n");
-            else printf("  ");
-        }
+        _combatants.for_each(
+            [this, &i, alleigance](auto& c){
+                if (c.stats.alleigance == alleigance) {
+                    print_combatant(c);
+                    printf((i++ % 2) ? "\n" : "  ");
+                }
+        });
     };
 
     printf("Heroes\n");
     print_by_alleigance(Alleigance::Hero);
 
-    if (get_count(Alleigance::NPC) > 0) {
+    if (_combatants.get_count(Alleigance::NPC) > 0) {
         printf("\nNPC\n");
         print_by_alleigance(Alleigance::NPC);
     }

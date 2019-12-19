@@ -1,6 +1,8 @@
 project(oldknights_lib LANGUAGES CXX)
 
 add_library(${PROJECT_NAME} STATIC
+    battleloop.cpp
     combatant.cpp
-    battleloop.cpp)
+    combatantlist.cpp
+)
 target_link_libraries(${PROJECT_NAME} PUBLIC oldknights_inc)
